@@ -22,7 +22,7 @@ The hook (by default) both rounds and limits the DPR - it will round _down_ by d
 
 **Default usage**
 
-```js
+```jsx
 import {useDevicePixelRatio} from 'use-device-pixel-ratio'
 
 async function MyComponent() {
@@ -33,7 +33,7 @@ async function MyComponent() {
 
 **Setting higher limit**
 
-```js
+```jsx
 import {useDevicePixelRatio} from 'use-device-pixel-ratio'
 
 async function MyComponent() {
@@ -44,7 +44,7 @@ async function MyComponent() {
 
 **Getting the "raw" DPR**
 
-```js
+```jsx
 import {useDevicePixelRatio} from 'use-device-pixel-ratio'
 
 async function MyComponent() {
@@ -55,7 +55,7 @@ async function MyComponent() {
 
 **Setting the default DPR**
 
-```js
+```jsx
 import {useDevicePixelRatio} from 'use-device-pixel-ratio'
 
 async function MyComponent() {

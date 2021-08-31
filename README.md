@@ -1,0 +1,71 @@
+# use-device-pixel-ratio
+
+[![github status checks](https://badgen.net/github/checks/rexxars/use-device-pixel-ratio)](https://github.com/rexxars/use-device-pixel-ratio/actions) [![bundlephobia](https://badgen.net/bundlephobia/minzip/use-device-pixel-ratio)](https://bundlephobia.com/result?p=use-device-pixel-ratio)
+
+`useDevicePixelRatio()` is a React hook that will tell you what the current device has as its Device Pixel Ratio (DPR). The hook is reactive - if the browser window moves to a different display with a different DPR, it will update automatically.
+
+## Installing
+
+```
+npm i use-device-pixel-ratio
+```
+
+## Server rendering
+
+When rendering on the server or in browsers that do not support the `devicePixelRatio` property, it will default to `1` unless overriden by using the `defaultDpr` option.
+
+## Rounding/limiting
+
+The hook (by default) both rounds and limits the DPR - it will round _down_ by default, and cap the number at `3`. In other words, you should by default only have three values returned: `1`, `2` or `3`. To allow larger DPRs, pass a higher number to the `maxDpr` option. To prevent rounding, pass `round: false`.
+
+## Usage
+
+**Default usage**
+
+```js
+import {useDevicePixelRatio} from 'use-device-pixel-ratio'
+
+async function MyComponent() {
+  const dpr = useDevicePixelRatio()
+  return <img src={`https://my.image.host/file.jpg?dpr=${dpr}`}>
+}
+```
+
+**Setting higher limit**
+
+```js
+import {useDevicePixelRatio} from 'use-device-pixel-ratio'
+
+async function MyComponent() {
+  const dpr = useDevicePixelRatio({maxDpr: 50})
+  return <div>DPR is {dpr}</div>
+}
+```
+
+**Getting the "raw" DPR**
+
+```js
+import {useDevicePixelRatio} from 'use-device-pixel-ratio'
+
+async function MyComponent() {
+  const dpr = useDevicePixelRatio({maxDpr: +Infinity, round: false})
+  return <div>DPR is {dpr}</div>
+}
+```
+
+**Setting the default DPR**
+
+```js
+import {useDevicePixelRatio} from 'use-device-pixel-ratio'
+
+async function MyComponent() {
+  const dpr = useDevicePixelRatio({defaultDpr: 2})
+
+  // Actual device DPR if available, 2 otherwise
+  return <div>DPR is {dpr}</div>
+}
+```
+
+## License
+
+MIT © [Espen Hovlandsdal](https://espen.codes/)

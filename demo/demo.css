@@ -1,0 +1,23 @@
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  font-family: sans-serif;
+}
+
+.currentDpr {
+  text-align: center;
+  align-self: center;
+  font-size: 10vh;
+  flex: 1;
+}
+
+strong {
+  color: green;
+}

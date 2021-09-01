@@ -2,7 +2,7 @@
 
 [![github status checks](https://badgen.net/github/checks/rexxars/use-device-pixel-ratio)](https://github.com/rexxars/use-device-pixel-ratio/actions) [![bundlephobia](https://badgen.net/bundlephobia/minzip/use-device-pixel-ratio)](https://bundlephobia.com/result?p=use-device-pixel-ratio)
 
-`useDevicePixelRatio()` is a React hook that will tell you what the current device has as its Device Pixel Ratio (DPR). The hook is reactive - if the browser window moves to a different display with a different DPR, it will update automatically.
+`useDevicePixelRatio()` is a React hook (and utility) that will tell you what the current device has as its Device Pixel Ratio (DPR). The hook is reactive - if the browser window moves to a different display with a different DPR, it will update automatically. If you only need to get the DPR statically, there is a function (`getDevicePixelRatio()`) equivalent.
 
 ## Installing
 
@@ -64,6 +64,17 @@ async function MyComponent() {
   // Actual device DPR if available, 2 otherwise
   return <div>DPR is {dpr}</div>
 }
+```
+
+## Function usage
+
+```ts
+import {getDevicePixelRatio} from 'use-device-pixel-ratio'
+
+console.log('Device pixel ratio is ', getDevicePixelRatio())
+
+// Or, with options (same options as hook):
+console.log('Device pixel ratio is ', getDevicePixelRatio({maxDpr: 5}))
 ```
 
 ## License

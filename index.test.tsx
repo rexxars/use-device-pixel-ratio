@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {act} from 'react-dom/test-utils'
-import {useDevicePixelRatio} from './index'
+import {useDevicePixelRatio, getDevicePixelRatio} from './index'
 
 let container: HTMLDivElement
 
@@ -18,116 +18,154 @@ afterEach(() => {
   document.body.removeChild(container)
 })
 
-it('renders with no options', () => {
-  const Test = () => {
-    const dpr = useDevicePixelRatio()
-    return <>DPR is {dpr}</>
-  }
+describe('hook', () => {
+  it('renders with no options', () => {
+    const Test = () => {
+      const dpr = useDevicePixelRatio()
+      return <>DPR is {dpr}</>
+    }
 
-  act(() => {
-    ReactDOM.render(<Test />, container)
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 1')
   })
-  expect(container.textContent).toBe('DPR is 1')
+
+  it('renders with no options and no devicePixelRatio window prop', () => {
+    assignWindowProp('devicePixelRatio', undefined)
+    const Test = () => {
+      const dpr = useDevicePixelRatio()
+      return <>DPR is {dpr}</>
+    }
+
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 1')
+  })
+
+  it('renders with custom default device pixel ratio', () => {
+    assignWindowProp('devicePixelRatio', undefined)
+    const Test = () => {
+      const dpr = useDevicePixelRatio({defaultDpr: 2})
+      return <>DPR is {dpr}</>
+    }
+
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 2')
+  })
+
+  it('rounds down by default', () => {
+    assignWindowProp('devicePixelRatio', Math.PI)
+    const Test = () => {
+      const dpr = useDevicePixelRatio()
+      return <>DPR is {dpr}</>
+    }
+
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 3')
+  })
+
+  it('can be told not to round down', () => {
+    assignWindowProp('devicePixelRatio', 2.14)
+    const Test = () => {
+      const dpr = useDevicePixelRatio({round: false})
+      return <>DPR is {dpr}</>
+    }
+
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 2.14')
+  })
+
+  it('limits to 3 dpr by default', () => {
+    assignWindowProp('devicePixelRatio', 5)
+    const Test = () => {
+      const dpr = useDevicePixelRatio()
+      return <>DPR is {dpr}</>
+    }
+
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 3')
+  })
+
+  it('can be given custom maximum dpr', () => {
+    assignWindowProp('devicePixelRatio', 5)
+    const Test = () => {
+      const dpr = useDevicePixelRatio({maxDpr: 4})
+      return <>DPR is {dpr}</>
+    }
+
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 4')
+  })
+
+  it('reacts to changes in dpr', () => {
+    const matchMedia = getMockedMatchMedia()
+    assignWindowProp('matchMedia', matchMedia)
+    assignWindowProp('devicePixelRatio', 2)
+    const Test = () => {
+      const dpr = useDevicePixelRatio()
+      return <>DPR is {dpr}</>
+    }
+
+    act(() => {
+      ReactDOM.render(<Test />, container)
+    })
+    expect(container.textContent).toBe('DPR is 2')
+
+    act(() => {
+      assignWindowProp('devicePixelRatio', 1)
+      matchMedia.trigger()
+    })
+
+    expect(container.textContent).toBe('DPR is 1')
+  })
 })
 
-it('renders with no options and no devicePixelRatio window prop', () => {
-  assignWindowProp('devicePixelRatio', undefined)
-  const Test = () => {
-    const dpr = useDevicePixelRatio()
-    return <>DPR is {dpr}</>
-  }
-
-  act(() => {
-    ReactDOM.render(<Test />, container)
-  })
-  expect(container.textContent).toBe('DPR is 1')
-})
-
-it('renders with custom default device pixel ratio', () => {
-  assignWindowProp('devicePixelRatio', undefined)
-  const Test = () => {
-    const dpr = useDevicePixelRatio({defaultDpr: 2})
-    return <>DPR is {dpr}</>
-  }
-
-  act(() => {
-    ReactDOM.render(<Test />, container)
-  })
-  expect(container.textContent).toBe('DPR is 2')
-})
-
-it('rounds down by default', () => {
-  assignWindowProp('devicePixelRatio', Math.PI)
-  const Test = () => {
-    const dpr = useDevicePixelRatio()
-    return <>DPR is {dpr}</>
-  }
-
-  act(() => {
-    ReactDOM.render(<Test />, container)
-  })
-  expect(container.textContent).toBe('DPR is 3')
-})
-
-it('can be told not to round down', () => {
-  assignWindowProp('devicePixelRatio', 2.14)
-  const Test = () => {
-    const dpr = useDevicePixelRatio({round: false})
-    return <>DPR is {dpr}</>
-  }
-
-  act(() => {
-    ReactDOM.render(<Test />, container)
-  })
-  expect(container.textContent).toBe('DPR is 2.14')
-})
-
-it('limits to 3 dpr by default', () => {
-  assignWindowProp('devicePixelRatio', 5)
-  const Test = () => {
-    const dpr = useDevicePixelRatio()
-    return <>DPR is {dpr}</>
-  }
-
-  act(() => {
-    ReactDOM.render(<Test />, container)
-  })
-  expect(container.textContent).toBe('DPR is 3')
-})
-
-it('can be given custom maximum dpr', () => {
-  assignWindowProp('devicePixelRatio', 5)
-  const Test = () => {
-    const dpr = useDevicePixelRatio({maxDpr: 4})
-    return <>DPR is {dpr}</>
-  }
-
-  act(() => {
-    ReactDOM.render(<Test />, container)
-  })
-  expect(container.textContent).toBe('DPR is 4')
-})
-
-it('reacts to changes in dpr', () => {
-  const matchMedia = getMockedMatchMedia()
-  assignWindowProp('matchMedia', matchMedia)
-  assignWindowProp('devicePixelRatio', 2)
-  const Test = () => {
-    const dpr = useDevicePixelRatio()
-    return <>DPR is {dpr}</>
-  }
-
-  act(() => {
-    ReactDOM.render(<Test />, container)
-  })
-  expect(container.textContent).toBe('DPR is 2')
-
-  act(() => {
-    assignWindowProp('devicePixelRatio', 1)
-    matchMedia.trigger()
+describe('function', () => {
+  it('can get with no options', () => {
+    expect(getDevicePixelRatio()).toBe(1)
   })
 
-  expect(container.textContent).toBe('DPR is 1')
+  it('get with no options and no devicePixelRatio window prop', () => {
+    assignWindowProp('devicePixelRatio', undefined)
+    expect(getDevicePixelRatio()).toBe(1)
+  })
+
+  it('get with custom default device pixel ratio', () => {
+    assignWindowProp('devicePixelRatio', undefined)
+    expect(getDevicePixelRatio({defaultDpr: 2})).toBe(2)
+  })
+
+  it('rounds down by default', () => {
+    assignWindowProp('devicePixelRatio', Math.PI)
+    expect(getDevicePixelRatio()).toBe(3)
+  })
+
+  it('can be told not to round down', () => {
+    assignWindowProp('devicePixelRatio', 2.14)
+    expect(getDevicePixelRatio({round: false})).toBe(2.14)
+  })
+
+  it('limits to 3 dpr by default', () => {
+    assignWindowProp('devicePixelRatio', 5)
+    expect(getDevicePixelRatio()).toBe(3)
+  })
+
+  it('can be given custom maximum dpr', () => {
+    assignWindowProp('devicePixelRatio', 5)
+    expect(getDevicePixelRatio({maxDpr: 4})).toBe(4)
+  })
 })
 
 /**

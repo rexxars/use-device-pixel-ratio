@@ -32,8 +32,7 @@ export interface DevicePixelRatioOptions {
  * @returns The current device pixel ratio, or the default if none can be resolved
  */
 export function useDevicePixelRatio(options?: DevicePixelRatioOptions) {
-  const {defaultDpr = 1, maxDpr = 3, round = true} = options || {}
-  const dpr = getDpr(defaultDpr, maxDpr, round)
+  const dpr = getDevicePixelRatio(options)
   const [currentDpr, setCurrentDpr] = useState(dpr)
 
   useEffect(() => {
@@ -42,19 +41,26 @@ export function useDevicePixelRatio(options?: DevicePixelRatioOptions) {
       return
     }
 
-    const updateDpr = () => setCurrentDpr(getDpr(defaultDpr, maxDpr, round))
+    const updateDpr = () => setCurrentDpr(getDevicePixelRatio(options))
     const mediaMatcher = window.matchMedia(`screen and (resolution: ${currentDpr}dppx)`)
     mediaMatcher.addEventListener('change', updateDpr)
 
     return () => {
       mediaMatcher.removeEventListener('change', updateDpr)
     }
-  }, [currentDpr, defaultDpr, maxDpr, round])
+  }, [currentDpr, options])
 
   return currentDpr
 }
 
-function getDpr(defaultDpr: number, maxDpr: number, round: boolean): number {
+/**
+ * Returns the current device pixel ratio (DPR) given the passed options
+ *
+ * @param options
+ * @returns current device pixel ratio
+ */
+export function getDevicePixelRatio(options?: DevicePixelRatioOptions): number {
+  const {defaultDpr = 1, maxDpr = 3, round = true} = options || {}
   const hasDprProp = typeof window !== 'undefined' && typeof window.devicePixelRatio === 'number'
   const dpr = hasDprProp ? window.devicePixelRatio : defaultDpr
   const rounded = Math.min(Math.max(1, round ? Math.floor(dpr) : dpr), maxDpr)

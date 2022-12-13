@@ -1,6 +1,6 @@
 {
   "name": "use-device-pixel-ratio",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "React hook for finding device pixel ratio (DPR), optionally capping/rounding",
   "keywords": [
     "react",

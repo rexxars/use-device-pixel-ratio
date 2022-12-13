@@ -34,6 +34,7 @@ export interface DevicePixelRatioOptions {
 export function useDevicePixelRatio(options?: DevicePixelRatioOptions) {
   const dpr = getDevicePixelRatio(options)
   const [currentDpr, setCurrentDpr] = useState(dpr)
+  const {defaultDpr, maxDpr, round} = options || {}
 
   useEffect(() => {
     const canListen = typeof window !== 'undefined' && 'matchMedia' in window
@@ -41,14 +42,14 @@ export function useDevicePixelRatio(options?: DevicePixelRatioOptions) {
       return
     }
 
-    const updateDpr = () => setCurrentDpr(getDevicePixelRatio(options))
+    const updateDpr = () => setCurrentDpr(getDevicePixelRatio({defaultDpr, maxDpr, round}))
     const mediaMatcher = window.matchMedia(`screen and (resolution: ${currentDpr}dppx)`)
     mediaMatcher.addEventListener('change', updateDpr)
 
     return () => {
       mediaMatcher.removeEventListener('change', updateDpr)
     }
-  }, [currentDpr, options])
+  }, [currentDpr, defaultDpr, maxDpr, round])
 
   return currentDpr
 }

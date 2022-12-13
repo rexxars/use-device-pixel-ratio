@@ -44,10 +44,20 @@ export function useDevicePixelRatio(options?: DevicePixelRatioOptions) {
 
     const updateDpr = () => setCurrentDpr(getDevicePixelRatio({defaultDpr, maxDpr, round}))
     const mediaMatcher = window.matchMedia(`screen and (resolution: ${currentDpr}dppx)`)
-    mediaMatcher.addEventListener('change', updateDpr)
+
+    // Safari 13.1 does not have `addEventListener`, but does have `addListener`
+    if (mediaMatcher.addEventListener) {
+      mediaMatcher.addEventListener('change', updateDpr)
+    } else {
+      mediaMatcher.addListener(updateDpr)
+    }
 
     return () => {
-      mediaMatcher.removeEventListener('change', updateDpr)
+      if (mediaMatcher.removeEventListener) {
+        mediaMatcher.removeEventListener('change', updateDpr)
+      } else {
+        mediaMatcher.removeListener(updateDpr)
+      }
     }
   }, [currentDpr, defaultDpr, maxDpr, round])
 

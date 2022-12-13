@@ -29,6 +29,7 @@
     "dev": "vite",
     "build": "microbundle --target node",
     "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
     "test": "jest"
   },
   "devDependencies": {
